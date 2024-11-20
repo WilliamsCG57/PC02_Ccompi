@@ -1,40 +1,32 @@
 <template>
-  <q-page>
-    <q-toolbar>
-      <q-toolbar-title>Listado de Películas</q-toolbar-title>
-      <q-input
-        v-model="query"
-        label="Buscar película"
-        debounce="300"
-        @input="fetchMovies"
-      />
-    </q-toolbar>
-    <q-list>
-      <q-item v-for="movie in movies" :key="movie.id">
-        <q-item-section avatar>
-          <img
-            :src="`http://image.tmdb.org/t/p/w500${movie.poster_path}`"
-            alt="poster"
-          />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ movie.title }}</q-item-label>
-          <q-item-label caption>
-            Votos: {{ movie.vote_average }} ({{ movie.vote_count }})
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
-  </q-page>
+  <div class="movies-page q-ml-md q-mr-xl">
+    <div class="movies-list">
+      <!-- Lista de películas -->
+      <MoviesList :movies="movies" />
+    </div>
+  </div>
 </template>
+
+<style>
+.movies-page {
+  display: flex;
+  justify-content: center; /* Centrar la lista */
+}
+.movies-list {
+  width: 100%; /* Ancho completo para la lista */
+}
+</style>
 
 <script>
 import axios from "axios";
+import MoviesList from "src/components/movies/MoviesList.vue"; // Componente MoviesList
+
 export default {
+  name: "MoviesPage",
+  components: { MoviesList }, // Registramos el componente MoviesList
   data() {
     return {
-      movies: [],
-      query: "",
+      movies: [], // Lista de todas las películas
     };
   },
   methods: {
@@ -45,36 +37,22 @@ export default {
           {
             headers: {
               Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMzJlZjM0NThmOTdlNzY4NDViNzA0MjNmZmVkN2I5YyIsIm5iZiI6MTczMjA1NjgzMy4yMTI3MTAxLCJzdWIiOiI2NzNjZmRlZTRkNmRiMDBkOTNkNGRmOTciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.5NeNTeMIFHqZ6d60ZZyZQQDGq1wRb-io9CSzxClz9NQ", // Reemplaza con el token
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMzJlZjM0NThmOTdlNzY4NDViNzA0MjNmZmVkN2I5YyIsIm5iZiI6MTczMjA1NjgzMy4yMTI3MTAxLCJzdWIiOiI2NzNjZmRlZTRkNmRiMDBkOTNkNGRmOTciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.5NeNTeMIFHqZ6d60ZZyZQQDGq1wRb-io9CSzxClz9NQ",
             },
             params: {
-              language: "es-PE",
-              sort_by: "popularity.desc",
-              query: this.query,
+              language: "es-PE", // Idioma español
+              sort_by: "popularity.desc", // Orden por popularidad
             },
           }
         );
-        this.movies = response.data.results;
+        this.movies = response.data.results || []; // Guardamos las películas en el estado
       } catch (error) {
-        console.error(error);
+        console.error("Error al obtener películas:", error);
       }
     },
   },
   mounted() {
-    this.fetchMovies();
+    this.fetchMovies(); // Obtenemos las películas al montar el componente
   },
 };
 </script>
-
-<style>
-.product-page {
-  display: flex;
-  justify-content: space-between;
-}
-.product-filter {
-  width: 25%;
-}
-.product-list {
-  width: 75%;
-}
-</style>

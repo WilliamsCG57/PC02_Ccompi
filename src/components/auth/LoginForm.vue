@@ -177,7 +177,7 @@ h2 {
 .row.button input[type="button"]:hover {
   color: #fff;
   border-color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(247, 244, 244, 0.15);
 }
 
 .register {
