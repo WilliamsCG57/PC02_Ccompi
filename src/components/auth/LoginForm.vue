@@ -210,7 +210,7 @@ export default {
           localStorage.setItem("userData", JSON.stringify(response.data));
           console.log(JSON.stringify(response));
           this.$q.notify({
-            message: "Inicio exitoso",
+            message: "Las credenciales son correctas",
             color: "positive",
             timeout: 5000,
             position: "top",
