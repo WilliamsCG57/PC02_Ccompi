@@ -1,8 +1,12 @@
 <template>
   <div class="movies-page q-ml-md q-mr-xl">
+    <!-- Componente para el filtro de búsqueda -->
+    <div class="movies-filter q-ml-md q-mr-xl">
+      <MoviesFilter v-model="query" />
+    </div>
+    <!-- Componente para la lista de películas -->
     <div class="movies-list">
-      <!-- Lista de películas -->
-      <MoviesList :movies="movies" />
+      <MoviesList :movies="filteredMovies" />
     </div>
   </div>
 </template>
@@ -10,24 +14,40 @@
 <style>
 .movies-page {
   display: flex;
-  justify-content: center; /* Centrar la lista */
+  flex-direction: column;
+  align-items: center;
 }
 .movies-list {
-  width: 100%; /* Ancho completo para la lista */
+  width: 75%;
+}
+.movies-filter {
+  width: 25%;
 }
 </style>
 
 <script>
 import axios from "axios";
-import MoviesList from "src/components/movies/MoviesList.vue"; // Componente MoviesList
+import MoviesFilter from "src/components/movies/MoviesFilter.vue";
+import MoviesList from "src/components/movies/MoviesList.vue";
 
 export default {
   name: "MoviesPage",
-  components: { MoviesList }, // Registramos el componente MoviesList
+  components: { MoviesFilter, MoviesList },
   data() {
     return {
-      movies: [], // Lista de todas las películas
+      query: "", // Término de búsqueda
+      movies: [], // Lista completa de películas
     };
+  },
+  computed: {
+    // Filtra las películas según el término de búsqueda
+    filteredMovies() {
+      if (!this.query) return this.movies; // Si no hay búsqueda, retorna todas las películas
+      const searchQuery = this.query.toLowerCase();
+      return this.movies.filter((movie) =>
+        movie.title.toLowerCase().includes(searchQuery)
+      );
+    },
   },
   methods: {
     async fetchMovies() {
@@ -40,19 +60,19 @@ export default {
                 "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMzJlZjM0NThmOTdlNzY4NDViNzA0MjNmZmVkN2I5YyIsIm5iZiI6MTczMjA1NjgzMy4yMTI3MTAxLCJzdWIiOiI2NzNjZmRlZTRkNmRiMDBkOTNkNGRmOTciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.5NeNTeMIFHqZ6d60ZZyZQQDGq1wRb-io9CSzxClz9NQ",
             },
             params: {
-              language: "es-PE", // Idioma español
-              sort_by: "popularity.desc", // Orden por popularidad
+              language: "es-PE",
+              sort_by: "popularity.desc",
             },
           }
         );
-        this.movies = response.data.results || []; // Guardamos las películas en el estado
+        this.movies = response.data.results || [];
       } catch (error) {
         console.error("Error al obtener películas:", error);
       }
     },
   },
   mounted() {
-    this.fetchMovies(); // Obtenemos las películas al montar el componente
+    this.fetchMovies(); // Cargar películas al montar
   },
 };
 </script>

@@ -19,23 +19,10 @@
   </q-card>
 </template>
 
-<script>
-export default {
-  name: "MoviesItem",
-  props: {
-    movie: {
-      // Recibimos una película como prop
-      type: Object,
-      required: true,
-    },
-  },
-};
-</script>
-
 <style>
 .movie-card {
   width: 300px;
-  margin: 16px; /* Espaciado entre tarjetas */
+  margin: 10px; /* Espaciado entre tarjetas */
 }
 
 .movie-card q-card-title {
@@ -50,3 +37,16 @@ export default {
   color: #666;
 }
 </style>
+
+<script>
+export default {
+  name: "MoviesItem",
+  props: {
+    movie: {
+      // Recibimos una película como prop
+      type: Object,
+      required: true,
+    },
+  },
+};
+</script>
