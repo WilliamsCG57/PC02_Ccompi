@@ -4,6 +4,17 @@
     <div class="movies-filter q-ml-md q-mr-xl">
       <MoviesFilter v-model="query" />
     </div>
+
+    <!-- Componente para el filtro de rango de votación -->
+    <div class="vote-range-filter q-ml-md q-mr-xl">
+      <VoteRangeButtons v-model:selectedRange="voteRange" />
+    </div>
+
+    <!-- Componente para el filtro de conteo de votos -->
+    <div class="vote-count-filter q-ml-md q-mr-xl">
+      <VoteCountRangeButtons v-model:selectedCountRange="voteCountRange" />
+    </div>
+
     <!-- Componente para la lista de películas -->
     <div class="movies-list">
       <MoviesList :movies="filteredMovies" />
@@ -11,41 +22,42 @@
   </div>
 </template>
 
-<style>
-.movies-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.movies-list {
-  width: 75%;
-}
-.movies-filter {
-  width: 25%;
-}
-</style>
-
 <script>
 import axios from "axios";
 import MoviesFilter from "src/components/movies/MoviesFilter.vue";
+import VoteRangeButtons from "src/components/movies/VoteRangeButtons.vue";
+import VoteCountRangeButtons from "src/components/movies/VoteCountRangeButtons.vue"; // Nuevo componente
 import MoviesList from "src/components/movies/MoviesList.vue";
 
 export default {
   name: "MoviesPage",
-  components: { MoviesFilter, MoviesList },
+  components: {
+    MoviesFilter,
+    VoteRangeButtons,
+    VoteCountRangeButtons,
+    MoviesList,
+  },
   data() {
     return {
-      query: "", // Término de búsqueda
+      query: "", // Búsqueda por texto
+      voteRange: { min: 1, max: 10 }, // Rango de votación inicial (1-10)
+      voteCountRange: { min: 0, max: 6000 }, // Rango de conteo de votos inicial (0-6000)
       movies: [], // Lista completa de películas
     };
   },
   computed: {
-    // Filtra las películas según el término de búsqueda
+    // Combina todos los filtros (texto, rango de votación y conteo de votos)
     filteredMovies() {
-      if (!this.query) return this.movies; // Si no hay búsqueda, retorna todas las películas
-      const searchQuery = this.query.toLowerCase();
-      return this.movies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchQuery)
+      return this.movies.filter(
+        (movie) =>
+          // Filtro por búsqueda
+          movie.title.toLowerCase().includes(this.query.toLowerCase()) &&
+          // Filtro por rango de votación
+          movie.vote_average >= this.voteRange.min &&
+          movie.vote_average <= this.voteRange.max &&
+          // Filtro por rango de conteo de votos
+          movie.vote_count >= this.voteCountRange.min &&
+          movie.vote_count <= this.voteCountRange.max
       );
     },
   },
@@ -72,7 +84,25 @@ export default {
     },
   },
   mounted() {
-    this.fetchMovies(); // Cargar películas al montar
+    this.fetchMovies(); // Obtener películas al montar el componente
   },
 };
 </script>
+
+<style>
+.movies-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.movies-filter,
+.vote-range-filter {
+  width: 25%;
+}
+
+.vote-count-filter {
+  display: flex;
+  flex-wrap: nowrap; /* Evita que los botones se envuelvan */
+  gap: 0.5rem; /* Espaciado entre botones */
+}
+</style>

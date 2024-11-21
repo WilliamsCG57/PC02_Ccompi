@@ -1,5 +1,5 @@
 <template>
-  <h5>Listado de Películas</h5>
+  <h6>Listado de Películas</h6>
   <div class="movies-list">
     <div class="movies-grid">
       <div class="movie-item" v-for="movie in movies" :key="movie.id">
